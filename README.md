@@ -1,25 +1,29 @@
-# Introduction
+# Ethereum Multiple Addresses
+[![Build](https://github.com/ebellocchia/eth_multiple_addresses/actions/workflows/build.yml/badge.svg)](https://github.com/ebellocchia/eth_multiple_addresses/actions/workflows/build.yml)
+[![Test](https://github.com/ebellocchia/eth_multiple_addresses/actions/workflows/test.yml/badge.svg)](https://github.com/ebellocchia/eth_multiple_addresses/actions/workflows/test.yml)
+
+## Introduction
 
 Inspired by the way Coinbase Commerce works, this project allows generating multiple ETH addresses to receive payments on a single ETH account, in order to "emulate" the way Bitcoin works where a new address is generated at every payment request. This is useful for payment gateways because, in this way, they can automatically monitor each single address to check if the payment is received.
 
 In order to achieve this, a new smart contract is created for each payment request, which forwards the funds to the ETH user account.
 The contract is created in a deterministic way, so the address can be computed in advance and given to the payer without creating the contract. In this way, the contract is created only when the payment is actually received without wasting gas.
 
-Please note that this doesn't preserve the privacy, like in Bitcoin where it's impossibile to know if 2 addresses belong to the same wallet, because it's possible from the smart contract to see the destination address. 
+Please note that this doesn't preserve the privacy, like in Bitcoin where it's impossibile to know if 2 addresses belong to the same wallet, because it's possible from the smart contract to see the destination address.
 
-# Setup
+## Setup
 
 Install `yarn` if not installed:
 
     npm install -g yarn
 
-## Install package
+### Install package
 
 Simply run:
 
     npm i --include=dev
 
-## Compile
+### Compile
 
 - To compile the contract:
 
@@ -29,7 +33,7 @@ Simply run:
 
         yarn recompile
 
-## Run tests
+### Run tests
 
 - To run tests without coverage:
 
@@ -39,13 +43,13 @@ Simply run:
 
         yarn coverage
 
-## Deploy
+### Deploy
 
 To deploy the contract:
 
     yarn deploy <NETWORK>
 
-## Configuration
+### Configuration
 
 Hardhat is configured with the following networks:
 
@@ -63,9 +67,9 @@ Hardhat is configured with the following networks:
 The API keys, RPC nodes and mnemonic shall be configured in the `.env` file.\
 You may need to modify the gas limit and price in the Hardhat configuration file for some networks (e.g. Polygon), to successfully execute the transactions (you'll get a gas error).
 
-# How it works
+## How it works
 
-## "Forwarder" smart contract
+### "Forwarder" smart contract
 
 The `Forwarder` is the contract that receives the payment and forwards it to the user address.\
 The user address is fixed in the contract at cannot be changed anymore once initialized.
@@ -73,7 +77,7 @@ The user address is fixed in the contract at cannot be changed anymore once init
 A new `Forwarder` contract shall be created for each payment request and its address shall be given to the payer to transfer the funds.\
 Funds can be either ERC20 tokens or ETH.
 
-## "ForwarderFactory" smart contract
+### "ForwarderFactory" smart contract
 
 The `ForwarderFactory` allows deploying `Forwarder` contracts.
 
@@ -120,3 +124,7 @@ ___
 
 Flush ETH of the `Forwader` contract with address `forwaderAddress_`.\
 This means that the `Forwader` contract will transfer the ETH to its `destinationAddress_`.
+
+# License
+
+This software is available under the MIT license.
