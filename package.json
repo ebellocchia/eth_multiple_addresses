@@ -2,7 +2,7 @@
   "name": "eth_multiple_addresses",
   "author": "Emanuele Bellocchia",
   "description": "Smart contract that allows generating multiple ETH addresses to receive payments on a single ETH account",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,8 +31,8 @@
     "hardhat-docgen": "^1.3.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.3",
-    "@openzeppelin/contracts-upgradeable": "^4.9.3",
+    "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/contracts-upgradeable": "^5.0.2",
     "dotenv": "^16.0.3"
   }
 }
