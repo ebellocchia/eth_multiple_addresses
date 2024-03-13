@@ -24,13 +24,17 @@ describe("ForwarderContract", () => {
 
   it("should revert if functions are not called by the owner", async () => {
     const not_owner_account: Signer = test_ctx.accounts.signers[0];
+    const not_owner_address: string = await not_owner_account.getAddress();
 
     await expect(test_ctx.forwarder_factory.connect(not_owner_account).cloneForwarder(constants.NULL_ADDRESS, 0))
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder_factory, "OwnableUnauthorizedAccount")
+      .withArgs(not_owner_address);
     await expect(test_ctx.forwarder_factory.connect(not_owner_account).flushEth(constants.NULL_ADDRESS))
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder_factory, "OwnableUnauthorizedAccount")
+      .withArgs(not_owner_address);
     await expect(test_ctx.forwarder_factory.connect(not_owner_account).flushERC20(constants.NULL_ADDRESS, constants.NULL_ADDRESS))
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder_factory, "OwnableUnauthorizedAccount")
+      .withArgs(not_owner_address);
   });
 
   it("should clone a forwarder contract", async () => {
@@ -59,14 +63,14 @@ describe("ForwarderContract", () => {
     const salt: number = 0;
 
     const forwarder: Contract = await utils.cloneForwarderContract(
-      test_ctx.forwarder_factory, 
-      test_ctx.destination_address, 
+      test_ctx.forwarder_factory,
+      test_ctx.destination_address,
       salt
     );
-  
+
     await test_ctx.mock_token.transfer(forwarder.address, token_amount);
     await test_ctx.forwarder_factory.flushERC20(forwarder.address, test_ctx.mock_token.address);
-  
+
     expect(await test_ctx.mock_token.balanceOf(test_ctx.destination_address))
       .to.equal(10);
   });
@@ -77,17 +81,17 @@ describe("ForwarderContract", () => {
     const salt: number = 0;
 
     const forwarder: Contract = await utils.cloneForwarderContract(
-      test_ctx.forwarder_factory, 
-      test_ctx.destination_address, 
+      test_ctx.forwarder_factory,
+      test_ctx.destination_address,
       salt
     );
-  
+
     await test_ctx.accounts.owner.sendTransaction({
       to: forwarder.address,
       value: eth_amount,
     });
     await test_ctx.forwarder_factory.flushEth(forwarder.address);
-  
+
     expect(await test_ctx.destination_account.getBalance())
       .to.equal(initial_balance.add(eth_amount));
   });
@@ -102,6 +106,6 @@ describe("ForwarderContract", () => {
 
     await test_ctx.forwarder_factory.cloneForwarder(test_ctx.destination_address, salt);
     await expect(test_ctx.forwarder_factory.cloneForwarder(test_ctx.destination_address, salt))
-      .to.be.revertedWith("ERC1167: create2 failed");
+      .to.be.revertedWithCustomError(test_ctx.forwarder_factory, "ERC1167FailedCreateClone");
   });
 });

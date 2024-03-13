@@ -24,14 +24,17 @@ describe("Forwarder", () => {
 
   it("should revert if functions are not called by the owner", async () => {
     const not_owner_account: Signer = test_ctx.accounts.signers[0];
+    const not_owner_address: string = await not_owner_account.getAddress();
 
     // Contract shall be initialized
     await test_ctx.forwarder.init(test_ctx.destination_address);
 
     await expect(test_ctx.forwarder.connect(not_owner_account).flushERC20(constants.NULL_ADDRESS))
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder, "OwnableUnauthorizedAccount")
+      .withArgs(not_owner_address);
     await expect(test_ctx.forwarder.connect(not_owner_account).flushEth())
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder, "OwnableUnauthorizedAccount")
+      .withArgs(not_owner_address);
   });
 
   it("should have the correct destination address and owner when initialized", async () => {
@@ -45,7 +48,7 @@ describe("Forwarder", () => {
 
   it("should flush ERC20 token if initialized", async () => {
     const token_amount: number = 10;
-  
+
     await test_ctx.forwarder.init(test_ctx.destination_address);
     await test_ctx.mock_token.transfer(test_ctx.forwarder.address, token_amount);
 
@@ -79,13 +82,13 @@ describe("Forwarder", () => {
   it("should revert if initializing more than once", async () => {
     await test_ctx.forwarder.init(test_ctx.destination_address);
     await expect(test_ctx.forwarder.init(test_ctx.destination_address))
-      .to.be.revertedWith("Initializable: contract is already initialized");
+      .to.be.revertedWithCustomError(test_ctx.forwarder, "InvalidInitialization");
   });
 
   it("should revert if flushing without being initialized", async () => {
     await expect(test_ctx.forwarder.flushERC20(test_ctx.mock_token.address))
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder, "OwnableUnauthorizedAccount");
     await expect(test_ctx.forwarder.flushEth())
-      .to.be.revertedWith("Ownable: caller is not the owner");
+      .to.be.revertedWithCustomError(test_ctx.forwarder, "OwnableUnauthorizedAccount");
   });
 });

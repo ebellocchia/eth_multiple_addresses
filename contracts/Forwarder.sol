@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 //=============================================================//
 //                           IMPORTS                           //
 //=============================================================//
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 
 /**
  * @author Emanuele Bellocchia (ebellocchia@gmail.com)
  * @title  Forwader contract
- * @notice A forwader contract receives ERC20 tokens and ETH and flushes them to a 
+ * @notice A forwader contract receives ERC20 tokens and ETH and flushes them to a
  *         fixed destination address.
  *         The destination address is specificied at contract initialization and cannot be changed later.
  */
@@ -44,7 +45,7 @@ contract Forwarder is
     /**
      * Initialize contract
      * @param destinationAddress_ Destination address
-     */ 
+     */
     function init(
         address payable destinationAddress_
     ) public initializer {
@@ -52,12 +53,12 @@ contract Forwarder is
             revert NullDestinationAddressError();
         }
         destinationAddress = destinationAddress_;
-        __Ownable_init();
+        __Ownable_init(_msgSender());
     }
 
     /**
      * Flush the ERC20 token `tokenAddress_` to the destination address
-     */ 
+     */
     function flushERC20(
         address tokenAddress_
     ) public onlyOwner {
@@ -68,7 +69,7 @@ contract Forwarder is
 
     /**
      * Flush ETH to the destination address
-     */ 
+     */
     function flushEth() public onlyOwner {
         destinationAddress.transfer(address(this).balance);
     }

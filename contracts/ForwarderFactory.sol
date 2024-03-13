@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 //=============================================================//
 //                           IMPORTS                           //
 //=============================================================//
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/proxy/Clones.sol";
-import "./Forwarder.sol";
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Forwarder} from "./Forwarder.sol";
 
 
 /**
@@ -58,7 +58,7 @@ contract ForwarderFactory is
     /**
      * Constructor
      */
-    constructor() {
+    constructor() Ownable(_msgSender()) {
         __createParentForwarder();
     }
 
