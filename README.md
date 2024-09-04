@@ -81,7 +81,7 @@ Funds can be either ERC20 tokens or ETH.
 
 The `ForwarderFactory` allows deploying `Forwarder` contracts.
 
-The deployment of `Forwarder` is very cheap: in fact, at construction, the factory deploys a `Forwarder` contract that is then used to clone the other contracts.\
+The deployment of a `Forwarder` is very cheap: at construction, the factory deploys a `Forwarder` contract that is then used to clone the other contracts.\
 In other words, the deployed `Forwarder` contracts will only be proxies (in particular [ERC-1167 Minimal Proxy Contract](https://eips.ethereum.org/EIPS/eip-1167)) of the parent `Forwarder` contract.
 
 As explained in the introduction, `Forwarder` contracts are created in a deterministic way by using the `CREATE2` opcode, which allows creating a contract with a deterministic address by specifying a custom salt.\
